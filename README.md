@@ -119,7 +119,7 @@ plt.title('No.of Observations')
 plt.xlabel('#')
 plt.show()
 ```
-https://github.com/stavralf/Global-Temperatures-Project/blob/main/plots/plot1.png
+![plot1](https://github.com/user-attachments/assets/8fa6e531-851c-4b79-867b-fc84a3f9a820)
 
 <br/>
 
@@ -136,10 +136,11 @@ plt.xlabel('%', size = 12)
 plt.title('Rate of null values per city', size = 14)
 plt.grid(axis = 'x')
 plt.show()
+
 pd.DataFrame({"Montreal (%)" : null_rate[null_rate.index == "Montreal"], "Average (%)" : np.mean(null_rate[:].values)})
 ```
+![plot2](https://github.com/user-attachments/assets/85c568ca-9b82-464f-86ff-131eecd2dda8)
 
-![download](https://github.com/user-attachments/assets/65f8c824-cb61-4c69-a27a-4b8976ff9bc2)
 
 |Montreal (%)|	Average (%)|
 |------------|-------------|
@@ -180,7 +181,7 @@ plt.title('Difference of Average Temperature before and since the 20th century',
 plt.grid(axis = 'x')
 ```
 
-![download](https://github.com/user-attachments/assets/0576fed2-7c52-498f-8e66-17bfafc97d56)
+![plot3](https://github.com/user-attachments/assets/2767b434-67e6-4300-9a42-cd638a202704)
 
 
 > From below, all missing temperature values for Montreal are between the years of 1743 and 1780. However, from previous plots, Montreal's
@@ -211,8 +212,8 @@ plt.xlabel('Difference (Celcius)')
 plt.title('Difference of Average Temperature before and after 1900 (1780-2013)', size = 16)
 plt.grid(axis = 'x')
 ```
+![plot4](https://github.com/user-attachments/assets/7c13bcce-681c-40eb-ad1e-62a3948c3835)
 
-![download](https://github.com/user-attachments/assets/03eafee5-a6ee-4df5-bc69-b16efbabef45)
 
 <br/>
 
@@ -268,8 +269,7 @@ axs[1].set_xlabel('Year', size = 12)
 
 plt.show()
 ```
-
-![download](https://github.com/user-attachments/assets/bcef5992-c59c-46e2-8243-5714eaf71468)
+![plot5](https://github.com/user-attachments/assets/4924342e-f464-4a47-815c-509990d535e7)
 
 <br/>
 
