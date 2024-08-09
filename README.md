@@ -119,8 +119,7 @@ plt.title('No.of Observations')
 plt.xlabel('#')
 plt.show()
 ```
-
-![download](https://github.com/user-attachments/assets/b15cd4c8-bcf1-4b3d-8532-8309c509e826)
+https://github.com/stavralf/Global-Temperatures-Project/blob/main/plots/plot1.png
 
 <br/>
 
