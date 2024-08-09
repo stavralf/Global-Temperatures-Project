@@ -141,12 +141,11 @@ pd.DataFrame({"Montreal (%)" : null_rate[null_rate.index == "Montreal"], "Averag
 ```
 ![plot2](https://github.com/user-attachments/assets/85c568ca-9b82-464f-86ff-131eecd2dda8)
 
-
 |Montreal (%)|	Average (%)|
 |------------|-------------|
 |3.120025|	5.291562|
 
-<br/>
+<br/><br/>
 
 >Willing to locate the city based on temperature patterns, we employ the following criterion:
 >Comparing the Average Temperatures before and after 1900 on the whole, and for each city separately.
@@ -183,6 +182,7 @@ plt.grid(axis = 'x')
 
 ![plot3](https://github.com/user-attachments/assets/2767b434-67e6-4300-9a42-cd638a202704)
 
+<br/>
 
 > From below, all missing temperature values for Montreal are between the years of 1743 and 1780. However, from previous plots, Montreal's
 > null value rate is significantly below the average (3.1% compared to 5.3%) and the available observations are more than most of the
@@ -213,7 +213,6 @@ plt.title('Difference of Average Temperature before and after 1900 (1780-2013)',
 plt.grid(axis = 'x')
 ```
 ![plot4](https://github.com/user-attachments/assets/7c13bcce-681c-40eb-ad1e-62a3948c3835)
-
 
 <br/>
 
