@@ -632,6 +632,7 @@ plt.show()
 >We first check the autocorrelations after only adding an SMA term. We can see that the multipe to 12-lags correaltions have been
 >eliminated, however there is now an even stronger presence of positive autocorrealtion and partial auto-correlation with the first 
 >couple of lags. Hence, we employ the afforementioned strategy, namely of adding an AR term.
+```python
 s_model = ARIMA(endog = montreal_monthly_series, order = (0,0,0), seasonal_order = (0,1,1,12))
 s_fitted = s_model.fit()
 s_pred = s_fitted.predict()
@@ -643,6 +644,7 @@ plot_pacf(s_res, ax = axs[1])
 plt.show()
 
 s_fitted.summary()
+```
 
 ![download](https://github.com/user-attachments/assets/4558b729-664a-435b-b991-528056452598)
 ![Screenshot 2024-08-08 152514](https://github.com/user-attachments/assets/6cf9fb4e-aebb-4ba5-8860-fb985eca522f)
