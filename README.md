@@ -45,7 +45,7 @@ from statsmodels.tsa.arima.model import ARIMA
 ### Data Preproccessing and Descriptive Statistics
  <br/>
  
->We first load the dataset and check the type of the variables included.
+We first load the dataset and check the type of the variables included.
 
 ```python
 temps = pd.read_csv('GlobalLandTemperatures_GlobalLandTemperaturesByMajorCity.csv')
@@ -69,7 +69,7 @@ memory usage: 12.8+ MB
 ```
 <br/>
 
->Null values of each variable. We will deal with them below.
+Null values of each variable. We will deal with them below.
 
 ```python
 temps.isnull().sum()
@@ -87,9 +87,10 @@ temps.isnull().sum()
 
 <br/>
 
+Descriptive Statistics of the numerical variables for each city. Something that stands out is the significantly varying number
+of observations for each city.
+
 ```python
-# Descriptive Statistics of the numerical variables for each city. Something that stands out is the significantly varying number
-# of observations for each city.
 temps.groupby('City')['AverageTemperature'].describe()
 ```
 |City	   |count|	mean|	std|	min|	25%|	50%|	75%|	max|
@@ -109,8 +110,6 @@ temps.groupby('City')['AverageTemperature'].describe()
 
 <br/>
 
-> We take a closer look at the available observations for each city. The orange line represents the mean observations.
-
 ```python
 obsv_per_city = temps.groupby('City')['AverageTemperature'].count().sort_values()
 obsv_per_city.plot.barh(figsize = (16,20))
@@ -123,9 +122,9 @@ plt.show()
 
 <br/>
 
->At first, we aim to find a specific city to focus our analysis on. 
->A look at the existence of null values in our dataset (Number of null values over the total number of entries per city).
->The orange line represents the mean null rate.
+At first, we aim to find a specific city to focus our analysis on. 
+A look at the existence of null values in our dataset (Number of null values over the total number of entries per city).
+The orange line represents the mean null rate.
 
 ```python
 null_rate = temps.groupby('City')['AverageTemperature'].apply(lambda x : (x.isnull().sum()/x.count())*100)
@@ -147,8 +146,6 @@ pd.DataFrame({"Montreal (%)" : null_rate[null_rate.index == "Montreal"], "Averag
 
 <br/><br/>
 
->Willing to locate the city based on temperature patterns, we employ the following criterion:
->Comparing the Average Temperatures before and after 1900 on the whole, and for each city separately.
 
 ```python
 def twentieth_century(row):
@@ -161,13 +158,13 @@ temps['twentieth_century'] = temps.apply(twentieth_century, axis = 1)
 
 <br/>
 
-> We have created a dummy variable indicating whether or not the date is before or after 1900, we then group on the basis of this 
-> variable and we plot the results. The city that stands out from the rest is Montreal, which has witnessed an increase of almost
-> one Celsius degree on its average temperature after 1900 compared to the time period before.
->
-> Looking back at the null value rate plot, Montreal has significantly less null values concetration in its Average Temperature
-> measurement feature. Thus, Montreal is a reasonable city selection for procceeding our analysis on, this is additionally justified
-> by the short null value exploration below. 
+We have created a dummy variable indicating whether or not the date is before or after 1900, we then group on the basis of this 
+variable and we plot the results. The city that stands out from the rest is Montreal, which has witnessed an increase of almost
+one Celsius degree on its average temperature after 1900 compared to the time period before.
+
+Looking back at the null value rate plot, Montreal has significantly less null values concetration in its Average Temperature
+measurement feature. Thus, Montreal is a reasonable city selection for procceeding our analysis on, this is additionally justified
+by the short null value exploration below. 
 
 ```python
 temp_diff = temps.groupby(["City","twentieth_century"])["AverageTemperature"].mean().unstack()
@@ -184,9 +181,9 @@ plt.grid(axis = 'x')
 
 <br/>
 
-> From below, all missing temperature values for Montreal are between the years of 1743 and 1780. However, from previous plots, Montreal's
-> null value rate is significantly below the average (3.1% compared to 5.3%) and the available observations are more than most of the
-> remaining cities. So we decide to move on our investigation with Montreal by also ommiting its null values.
+From below, all missing temperature values for Montreal are between the years of 1743 and 1780. However, from previous plots, Montreal's
+null value rate is significantly below the average (3.1% compared to 5.3%) and the available observations are more than most of the
+remaining cities. So we decide to move on our investigation with Montreal by also ommiting its null values.
 
 ```python
 montreal_pre = temps[temps["City"] == "Montreal"]
@@ -199,8 +196,8 @@ array([1743, 1744, 1745, 1746, 1747, 1748, 1749, 1750, 1751, 1752, 1754,
 
 <br/>
 
->We generate the same barplot, but this time only with the years after 1780. We see that Montreal remains on the top of the
->temperature change before and after 1900.
+We generate the same barplot, but this time only with the years after 1780. We see that Montreal remains on the top of the
+temperature change before and after 1900.
 
 ```python
 temp_diff = temps[temps['year']>1780].groupby(["City","twentieth_century"])["AverageTemperature"].mean().unstack()
@@ -216,7 +213,7 @@ plt.grid(axis = 'x')
 
 <br/>
 
->Moreover, we see that the year of 2013 is not complete, instead the calculations stop in September. 
+Moreover, we see that the year of 2013 is not complete, instead the calculations stop in September. 
 
 ```python
 montreal_pre.tail()
@@ -233,8 +230,8 @@ montreal_pre.tail()
 
 <br/>
 
->For the shake of our following analysis, we tranform features related to time into the appropriate datetime format and we create two more 
->variables, the month and the year of the temeprature measurement.
+For the shake of our following analysis, we tranform features related to time into the appropriate datetime format and we create two more 
+variables, the month and the year of the temeprature measurement.
 
 ```python
 temps['dt']  = pd.to_datetime(temps['dt'])
@@ -248,11 +245,11 @@ temps['month'] = pd.to_datetime(temps['dt']).dt.month
 
 #### Stationarity, Seasonality and Model Selection
 
->Lets examine when Montreal experienced the greatest increase in its yearly average temperature figure.
->We first plot the temperature development throughtout the years under investigation. We then check the temperature uncertainty for
->the same years. We observe that there is an increasing trend in the average temperature  per year however there are constant  
->fluctuations. Moreover, the significant decrease in the standard deviation of the average temperature(uncertainty) calculations is 
->a positive sign for the validity of the further stochastic investigation.
+Lets examine when Montreal experienced the greatest increase in its yearly average temperature figure.
+We first plot the temperature development throughtout the years under investigation. We then check the temperature uncertainty for
+the same years. We observe that there is an increasing trend in the average temperature  per year however there are constant  
+fluctuations. Moreover, the significant decrease in the standard deviation of the average temperature(uncertainty) calculations is 
+a positive sign for the validity of the further stochastic investigation.
 
 ```python
 fig, axs = plt.subplots(nrows = 2, ncols = 1, figsize = (24,8), sharex = True)
@@ -272,10 +269,10 @@ plt.show()
 
 <br/>
 
-> The Stationarity of the time-series seems not to be established, mainly due to the presence of trend. Another way to obtain
-> a clear view on the matter is by checking the evolution of mean and variance along time so that any trend in these plots will
-> indicate clear signs of non-statinarity of the series. Stationarity condition is in the core of time-series analysis, as in part
-> guarantees greater forecasting ability through standard ARIMA modelling.
+The Stationarity of the time-series seems not to be established, mainly due to the presence of trend. Another way to obtain
+a clear view on the matter is by checking the evolution of mean and variance along time so that any trend in these plots will
+indicate clear signs of non-statinarity of the series. Stationarity condition is in the core of time-series analysis, as in part
+guarantees greater forecasting ability through standard ARIMA modelling.
 
 ```python
 montreal = temps[(temps["City"] == "Montreal")& (temps["year"] >1780)].groupby('year')['AverageTemperature'].mean()# Remove na values 
@@ -309,7 +306,7 @@ def autocorrelation(df, lag):
     return auto_corr
 ```
 
-> Preparing the dataframe needed for plotting the cummulative mean and cummulative variance of our time series in the following step.
+Preparing the dataframe needed for plotting the cummulative mean and cummulative variance of our time series in the following step.
 
 ```python
 montreal_df = montreal.reset_index()# Turning 'year' into a feature rather than an index. 
@@ -317,10 +314,10 @@ montreal_df["mean_stationarity"] = cummulative_mean(montreal)
 montreal_df['var_stationarity'] = cummulative_variance(montreal)
 ```
 
->It is witnessed from the two linegraphs below, that there is a dependency on time (or a trend) in both the mean and 
->the variance of temperature values. Especially, in both lines we can see a strong increasing trend in the years after 1900.
->Therefore, differencing the series for establishing stationarity might be needed, so we embark on this examination in the 
->following steps.
+It is witnessed from the two linegraphs below, that there is a dependency on time (or a trend) in both the mean and 
+the variance of temperature values. Especially, in both lines we can see a strong increasing trend in the years after 1900.
+Therefore, differencing the series for establishing stationarity might be needed, so we embark on this examination in the 
+following steps.
 
 ```python
 fig, axs = plt.subplots(nrows = 2, ncols = 1, figsize = (24,12), sharex = False)
@@ -343,8 +340,8 @@ axs[1].grid(axis = 'x')
 
 <br/>
 
->We employ the tactic of subtracting the time series with its own past values, the latter being described through the variable
->'times' or how many subtractions do we perform. Below we build the differencing functions.
+We employ the tactic of subtracting the time series with its own past values, the latter being described through the variable
+'times' or how many subtractions do we perform. Below we build the differencing functions.
 
 ```python
 def differencing(df):
@@ -359,8 +356,8 @@ def multiple_differencing(df, times):
     return df
 ```
 
->We now apply differencing and we then check the time-series plots of the resulted series from which we see that 
->the presence of the trend is mitigated and thus stationarity is a possibility that we investigate further.
+We now apply differencing and we then check the time-series plots of the resulted series from which we see that 
+the presence of the trend is mitigated and thus stationarity is a possibility that we investigate further.
 
 ```python
 colors = ['black', 'firebrick', 'green','orange']
@@ -381,25 +378,25 @@ plt.show()
 
 <br/>
 
->After differencing the series once, we continue by investigating the Auto-Correlation and the Patial Auto-Correlation between 
->the present value and the past values(lags) of the stochastic process by way of checking the sufficiency of the differencing order
->and start determining possible values for the parameters suitable for the ARIMA model. Regarding the order of difference as the 
->ACF plot is patternless, the 1-lag has correlation magnitude less than 0.5 and (almost) all the rest of the lags are insignificant, 
->a first order differencing seems sufficient. On the other hand, the PACF plot demonstrates correlation with 2- and 3-lag as well, 
->which is not justified by the ACF plot. Hence we decide to focus on the piece of information given by the ACF plot and see if 
->the Partial correlation has been mitigated.
->
->Moreover, from the ACF plot, the negative correlation in 1-lag and the following sharp cut-off in the following lags indicates
->that the series might be slightly over-differenced so that we may proceed by adding a Moving Average (MA) term to the model.
+After differencing the series once, we continue by investigating the Auto-Correlation and the Patial Auto-Correlation between 
+the present value and the past values(lags) of the stochastic process by way of checking the sufficiency of the differencing order
+and start determining possible values for the parameters suitable for the ARIMA model. Regarding the order of difference as the 
+ACF plot is patternless, the 1-lag has correlation magnitude less than 0.5 and (almost) all the rest of the lags are insignificant, 
+a first order differencing seems sufficient. On the other hand, the PACF plot demonstrates correlation with 2- and 3-lag as well, 
+which is not justified by the ACF plot. Hence we decide to focus on the piece of information given by the ACF plot and see if 
+the Partial correlation has been mitigated.
 
+Moreover, from the ACF plot, the negative correlation in 1-lag and the following sharp cut-off in the following lags indicates
+that the series might be slightly over-differenced so that we may proceed by adding a Moving Average (MA) term to the model.
 
->Differencing the series.
+<br/>
+Differencing the series.
 
 ```python
 montreal_differenced = multiple_differencing(montreal,1)
 ```
 
->Plot the ACF & PACF plots
+Plot the ACF & PACF plots
 
 ```python
 fig,axs = plt.subplots(nrows = 1,ncols=2, figsize = (16,4))
@@ -411,12 +408,12 @@ plt.show()
 
 <br/>
 
->The ACF and PACF plots below are showing that the correlation present in the previous plots has been eliminated after the addition of the
->MA term. Even though the residuals plot is showing a slightly worrisome wandering away from the mean (see next block), the variance of the 
->residuals has been decreased and the MA term of the model is significantly different to zero. Hence, we decide to continue with this 
->model (the model structure is : Y^_t = Y_(t-1) - ma.L1*e_(t-1), where e_(t-1) = Y^_(t-1) - Y_(t-1)).
-
->Model
+The ACF and PACF plots below are showing that the correlation present in the previous plots has been eliminated after the addition of the
+MA term. Even though the residuals plot is showing a slightly worrisome wandering away from the mean (see next block), the variance of the 
+residuals has been decreased and the MA term of the model is significantly different to zero. Hence, we decide to continue with this 
+model (the model structure is : Y^_t = Y_(t-1) - ma.L1*e_(t-1), where e_(t-1) = Y^_(t-1) - Y_(t-1)).
+<br/>
+Model
 
 ```python
 model = ARIMA(endog = montreal.values, order = (0,1,1))
@@ -424,7 +421,7 @@ model_fit = model.fit()
 pred = model_fit.predict()# In-sample predictions for the whole dataset. To each step the real measurement is added and a prediction is performed. 
 res = montreal.values - pred
 ```
->Plot the ACF & PACF plots
+Plot the ACF & PACF plots
 
 ```python
 fig,axs = plt.subplots(nrows = 1,ncols=2, figsize = (16,4))
@@ -443,14 +440,14 @@ model_fit.summary()
 
 #### Testing our model.
 
->Train and Test Set.
+Train and Test Set.
 
 ```python
 montreal_train = montreal[:round(len(montreal)*0.9)].reset_index()# We select 90% of the data available for training
 montreal_test = montreal[round(len(montreal)*0.9):].reset_index()
 ```
 
->In-Sample Forecasting step-by-step.
+In-Sample Forecasting step-by-step.
 ```python
 pred = [0 for i in range(len(montreal_test))]
 for i in range(len(montreal_test)):
@@ -461,10 +458,10 @@ for i in range(len(montreal_test)):
     montreal_train.loc[len(montreal_train)+i,'year'] = montreal_test.loc[i,'year']
 ```
 
->Plot the results. Our model can predict the general increasing trend of the average temperature in the years under consideration,
->while it seems that it does not overfit the data given for training. However, it cannot capture the magnitude of the fluctuations
->and slightly misses out the year-to-year increase or decrease in the figure of temperature. We however keep in mind that this does 
->not constitute a long-term forecasting.
+Plot the results. Our model can predict the general increasing trend of the average temperature in the years under consideration,
+while it seems that it does not overfit the data given for training. However, it cannot capture the magnitude of the fluctuations
+and slightly misses out the year-to-year increase or decrease in the figure of temperature. We however keep in mind that this does 
+not constitute a long-term forecasting.
 
 ```python
 forecast_on_test = pd.Series(index = montreal_test['year'], data = pred)
@@ -482,7 +479,7 @@ plt.show()
 
 #### Model Evaluation
 
->Lets formulate few basic metrics for assessing the performance of our model
+Lets formulate few basic metrics for assessing the performance of our model
 
 ```python
 def metrics_of_accuracy(pred, actual):
@@ -501,10 +498,10 @@ metrics_of_accuracy(pred,montreal.values[round(len(montreal)*0.9):])
 
 <br/>
 
->We calculate the same accuracy measures but for a range of AR terms to check whether the possibility of adding such terms would
->ameliorate the performance. We see that even though there is a small imporvement in the correaltion and the MAPE when an AR term 
->is introduced, that is not the case for the ME and MPE. We can investigate introducing AR terms to the model further, but for now,
->we proceed with the monthly investigation of the Montreal's temperature.
+We calculate the same accuracy measures but for a range of AR terms to check whether the possibility of adding such terms would
+ameliorate the performance. We see that even though there is a small imporvement in the correaltion and the MAPE when an AR term 
+is introduced, that is not the case for the ME and MPE. We can investigate introducing AR terms to the model further, but for now,
+we proceed with the monthly investigation of the Montreal's temperature.
 
 ```python
 frames = [0 for i in range(4)]
@@ -531,10 +528,10 @@ pd.concat(frames).reset_index().drop('index', axis = 1)
 ### Monthly Investigation.
 
 #### Stationarity, Seasonality and Model Selection
->Here we start our deroute for investigating Montreal's temperature per month, aiming to prove that the 
->standard seasonal/weather correlation between the same months or seasons holds in our dataset as well and to perform 
->prediction analysis. Plotting the series below, a clear seasonal pattern is observed while, in the first plot we observe
->slight upward trend, in fact slightly less spikes occur in the low temperatures.
+Here we start our deroute for investigating Montreal's temperature per month, aiming to prove that the 
+standard seasonal/weather correlation between the same months or seasons holds in our dataset as well and to perform 
+prediction analysis. Plotting the series below, a clear seasonal pattern is observed while, in the first plot we observe
+slight upward trend, in fact slightly less spikes occur in the low temperatures.
 
 ```python
 montreal_monthly = temps.loc[(temps["City"] == 'Montreal') & (temps['year']> 1780), ['dt','year','month','AverageTemperature']].reset_index().drop('index', axis = 1)
@@ -561,8 +558,8 @@ plt.show()
 
 <br/>
 
->Seasonal Differencing. Instead of subtracting a time-series with its 1-Lag, we generalise the concept and we subtract any k-lag
->This will allow us to mitigate the seasonal pattern seen in the plot above.
+Seasonal Differencing. Instead of subtracting a time-series with its 1-Lag, we generalise the concept and we subtract any k-lag
+This will allow us to mitigate the seasonal pattern seen in the plot above.
 
 ```python
 def seasonal_differencing(df, lag) :
@@ -577,9 +574,9 @@ def multiple_s_differencing(df,lag, times):
     return df
 ```
 
->Lets denote the times of non-seasonal differencing by d, and the times of seasonal differencing by D. As there is clear seasonal
->pattern and our data consists of monthly temperatures, we start by applying seasonal differencing of period 12 (handled by the
->variable 'times' in the functions above). 
+Lets denote the times of non-seasonal differencing by d, and the times of seasonal differencing by D. As there is clear seasonal
+pattern and our data consists of monthly temperatures, we start by applying seasonal differencing of period 12 (handled by the
+variable 'times' in the functions above). 
 
 ```python
 montreal_monthly_series_diff = multiple_differencing(montreal_monthly_series,1)# Single Differencing
@@ -629,9 +626,9 @@ plt.show()
 
 <br/>
 
->We first check the autocorrelations after only adding an SMA term. We can see that the multipe to 12-lags correaltions have been
->eliminated, however there is now an even stronger presence of positive autocorrealtion and partial auto-correlation with the first 
->couple of lags. Hence, we employ the afforementioned strategy, namely of adding an AR term.
+We first check the autocorrelations after only adding an SMA term. We can see that the multipe to 12-lags correaltions have been
+eliminated, however there is now an even stronger presence of positive autocorrealtion and partial auto-correlation with the first 
+couple of lags. Hence, we employ the afforementioned strategy, namely of adding an AR term.
 ```python
 s_model = ARIMA(endog = montreal_monthly_series, order = (0,0,0), seasonal_order = (0,1,1,12))
 s_fitted = s_model.fit()
@@ -652,8 +649,8 @@ s_fitted.summary()
 <br/>
 
 #### Model Evaluation
->As the predictions are on float numbers of many decimal places, the MAPE metric creates, almost necessarily, a rather high figure
->hence the metric of MAE is a more reliable one to count our assessment on.
+As the predictions are on float numbers of many decimal places, the MAPE metric creates, almost necessarily, a rather high figure
+hence the metric of MAE is a more reliable one to count our assessment on.
 
 ```python
 s_model = ARIMA(endog = montreal_monthly_series, order = (1,0,0), seasonal_order = (0,1,1,12))
@@ -682,9 +679,9 @@ test_monthly_set.index = montreal_monthly_series.index[len(montreal_monthly_seri
 pred.index = montreal_monthly_series.index[len(montreal_monthly_series)-12:]
 ```
 #### Predictions
->In the plot below, we gather the out-of-sample forecasts for the last 12 months of our dataset based on a SARIMA model of the form 
->y^{-}_t = AR_1*y_(t-1) + w_t + SMA_1*w_(t-12). The result is satisfying, however there is a possibility of overfitting and futher
->examination of ways to enhance the model performance might be required. 
+In the plot below, we gather the out-of-sample forecasts for the last 12 months of our dataset based on a SARIMA model of the form 
+y^{-}_t = AR_1*y_(t-1) + w_t + SMA_1*w_(t-12). The result is satisfying, however there is a possibility of overfitting and futher
+examination of ways to enhance the model performance might be required. 
 
 ```python
 plt.figure(figsize = (28,8))
